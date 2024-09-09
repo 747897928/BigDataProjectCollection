@@ -1,0 +1,5 @@
+package com.briup.core
+
+import org.apache.spark.{SparkConf, SparkContext}
+
+{"name":"tom","age":19}
