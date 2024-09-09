@@ -1,8 +1,12 @@
 package com.chinapex.edt
 
+import com.chinapex.label.util.HdfsUtil
+import org.apache.hadoop.conf.Configuration
+import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.spark.sql.{SaveMode, SparkSession}
 
 import java.text.SimpleDateFormat
+import java.util
 import java.util.Date
 
 /**
@@ -28,7 +32,13 @@ object ReportedData2HDFS {
     val dataStr = new SimpleDateFormat("yyyyMMdd").format(new Date())
     frame.write.mode(SaveMode.Overwrite).orc("data/edt/dwd_events/ds=" + dataStr)
     //frame.write.mode(SaveMode.Overwrite).parquet("hdfs://192.168.1.101:9000/user/hive/warehouse/edt/dwd_events/ds=" + dataStr)
+
+    //val fs = FileSystem.get(new Configuration())
+    //val list: util.List[String] = frame.toJSON.collectAsList()
+    //HdfsUtil.write(fs, new Path("/user/hive/warehouse/edt/dwd_events/ds=" + dataStr), list, true)
+    spark.sqlContext.clearCache()
     spark.stop()
+    spark.close()
 
     /**
      * drop table if exists dwd_events;

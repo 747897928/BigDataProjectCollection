@@ -1,6 +1,8 @@
 package com.chinapex.label.audience
 
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
+import org.apache.spark.storage.StorageLevel
+import org.json4s.jackson.Serialization
 
 import scala.util.Random
 
@@ -17,12 +19,15 @@ object AudienceCalculate {
     //下面的语句代替读取hdfs
 
     //用户主表，里面的字段省略
-    val masterDf = spark.read.csv("data/audience/master.csv").toDF("id", "name")
+    val masterDf: DataFrame = spark.read.csv("data/audience/master.csv").toDF("id", "name")
     masterDf.printSchema()
+    masterDf.persist(StorageLevel.MEMORY_AND_DISK)
     masterDf.createOrReplaceTempView("master")
     //主要是获得用户的id
-    val masterIdDF = spark.sql("select id from master")
-    spark.catalog.dropTempView("master")
+    //val masterIdDF = masterDf.select("id").distinct()
+    import org.apache.spark.sql.functions.col
+    val masterIdDF = masterDf.select(col("id"))
+
     //标签表
     val labelDf = spark.read.csv("data/audience/label.csv").toDF("id", "label")
     labelDf.printSchema()
@@ -43,8 +48,10 @@ object AudienceCalculate {
     val audiencePackageId = Random.nextInt(100000);
     //frame.write.mode(SaveMode.Overwrite).parquet("hdfs://192.168.1.101:9000/user/bigdata/audience/" + audiencePackageId)
     frame.write.mode(SaveMode.Overwrite).parquet("data/user/bigdata/audience/" + audiencePackageId)
-    spark.stop()
 
+    spark.sqlContext.clearCache()
+    spark.stop()
+    spark.close()
   }
 
 }
