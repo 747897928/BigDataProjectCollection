@@ -17,7 +17,7 @@
 # Introduction
 
 1. This project contains the work I have done during my study of big data. The main purpose is to make it easier for my future learning and review.
-
+2. Sensitive business related code has been removed from the work, and only some learned code has been retained.
 ----
 
 # Function Overview
