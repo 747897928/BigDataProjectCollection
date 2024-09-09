@@ -11,6 +11,7 @@
     <modules>
         <module>bigdata-study01</module>
         <module>bigdata-study02</module>
+        <module>work-label</module>
     </modules>
 
     <properties>
